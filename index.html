@@ -130,7 +130,7 @@ body{background:#090a10;color:#fff;font-family:Arial,sans-serif;text-align:cente
     </div>
 
 <div class="data-row">
-<div class="data-card"><div class="title">SỐ DƯ</div><div class="val" id="balance">10,000</div></div>
+<div class="data-card"><div class="title">SỐ DƯ</div><div class="val" id="balance">100</div></div>
 <div class="data-card"><div class="title">THẮNG</div><div class="val" id="win" style="color:#ffe066">0</div></div>
 </div>
 <button class="spin-btn" id="spinBtn" onclick="spin()">QUAY</button>
@@ -162,7 +162,7 @@ const ITEMS=[
 {rank:'🌟',suit:'',name:'WILD',color:'#ff9100',isWild:true}
 ];
 
-let balance=10000,isSpinning=false,grid=document.getElementById('grid');
+let balance=100,isSpinning=false,grid=document.getElementById('grid');
 
 function initBets(){
     let bar = document.getElementById('betBar');
