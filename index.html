@@ -35,7 +35,7 @@ body{background:#090a10;color:#fff;font-family:Arial,sans-serif;text-align:cente
     animation: slideDown 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-.card-top { font-size: 11px; font-weight: bold; line-height: 1; }
+.card-top { font-size: 11px; font-weight: bold; line-height: 1; text-align: left; }
 .card-center { font-size: 24px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
 .card-sub { font-size: 8px; font-weight: bold; align-self: flex-end; color: #555; }
 
@@ -188,24 +188,32 @@ function init(){
 }
 
 function createCard(item, index){
-let d=document.createElement('div');
-d.className='card' + (item.isWild ? ' wild' : '');
-d.style.animationDelay = (index * 0.02) + 's';
+    let d = document.createElement('div');
+    d.className = 'card' + (item.isWild ? ' wild' : '');
+    d.style.animationDelay = (index * 0.02) + 's';
 
-if(item.isWild){
-d.innerHTML=`
-<div class="card-top" style="color:${item.color}">${item.rank}</div>
-<div class="card-center">${item.rank}</div>
-<div class="card-sub">${item.name}</div>
-`;
-} else {
-d.innerHTML=`
-<div class="card-top" style="color:${item.color}">${item.rank}<br>${item.suit}</div>
-<div class="card-center" style="color:${item.color}">${item.suit}</div>
-<div class="card-sub">${item.name}</div>
-`;
-}
-return d;
+    let topDiv = document.createElement('div');
+    topDiv.className = 'card-top';
+    topDiv.style.color = item.color;
+    if(item.isWild){
+        topDiv.innerText = item.rank;
+    } else {
+        topDiv.innerHTML = item.rank + '<br>' + item.suit;
+    }
+
+    let centerDiv = document.createElement('div');
+    centerDiv.className = 'card-center';
+    centerDiv.style.color = item.color;
+    centerDiv.innerText = item.isWild ? item.rank : item.suit;
+
+    let subDiv = document.createElement('div');
+    subDiv.className = 'card-sub';
+    subDiv.innerText = item.name;
+
+    d.appendChild(topDiv);
+    d.appendChild(centerDiv);
+    d.appendChild(subDiv);
+    return d;
 }
 
 function spin(){
