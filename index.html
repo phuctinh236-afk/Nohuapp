@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nổ Hũ Giải Trí</title>
+    <style>
+        body { background: #1a1a1a; color: #fff; text-align: center; font-family: Arial, sans-serif; padding-top: 40px; }
+        .slot-machine { font-size: 45px; background: #333; padding: 20px; border-radius: 10px; display: inline-block; margin: 20px; border: 2px solid #ffcc00; }
+        button { background: #ffcc00; border: none; padding: 15px 30px; font-size: 20px; font-weight: bold; border-radius: 5px; cursor: pointer; color: #000; }
+        button:active { background: #e6b800; }
+    </style>
+</head>
+<body>
+    <h1>🎰 Nổ Hũ Giải Trí 🎰</h1>
+    <h2>Số dư: <span id="coins">1000</span> xu</h2>
+    
+    <div class="slot-machine">
+        <span id="slot1">🍒</span> | <span id="slot2">🍋</span> | <span id="slot3">🔔</span>
+    </div>
+    
+    <br>
+    <button onclick="spin()">QUAY NGAY (-100 xu)</button>
+    <h3 id="result"></h3>
+
+    <script>
+        let coins = 1000;
+        const symbols = ["🍒", "🍋", "🔔", "⭐", "💎", "💰"];
+
+        function spin() {
+            if (coins < 100) {
+                document.getElementById("result").innerText = "Hết xu rồi! Đợi hồi máu nhé!";
+                return;
+            }
+            coins -= 100;
+            
+            let s1 = symbols[Math.floor(Math.random() * symbols.length)];
+            let s2 = symbols[Math.floor(Math.random() * symbols.length)];
+            let s3 = symbols[Math.floor(Math.random() * symbols.length)];
+
+            document.getElementById("slot1").innerText = s1;
+            document.getElementById("slot2").innerText = s2;
+            document.getElementById("slot3").innerText = s3;
+
+            if (s1 === s2 && s2 === s3) {
+                if (s3 === "💰") {
+                    coins += 5000;
+                    document.getElementById("result").innerText = "🎉 NỔ HŨ LỚN! +5000 xu 🎉";
+                } else {
+                    coins += 1000;
+                    document.getElementById("result").innerText = "✨ Trúng thưởng! +1000 xu ✨";
+                }
+            } else {
+                document.getElementById("result").innerText = "Chúc bạn may mắn lần sau!";
+            }
+            document.getElementById("coins").innerText = coins;
+        }
+    </script>
+</body>
+</html>
