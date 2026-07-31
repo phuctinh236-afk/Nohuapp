@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Super Ace - Chọn Mức Cược</title>
+<title>Super Ace - Hình Ảnh Đầy Đủ</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;user-select:none}
 body{background:#090a10;color:#fff;font-family:Arial,sans-serif;text-align:center;min-height:100vh;display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding-bottom:10px}
@@ -28,25 +28,27 @@ body{background:#090a10;color:#fff;font-family:Arial,sans-serif;text-align:cente
     height: 72px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 4px 6px;
+    justify-content: center;
+    align-items: center;
     position: relative;
+    overflow: hidden;
     animation: slideDown 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-.card-top { font-size: 11px; font-weight: bold; line-height: 1; }
-.card-center { font-size: 24px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
-.card-sub { font-size: 8px; font-weight: bold; align-self: flex-end; color: #555; }
+.card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
 
-.card.wild { background: linear-gradient(135deg, #fff3cd, #ffeeba); border-color: #ff9100; }
+.card.wild { border-color: #ff9100; box-shadow: 0 0 8px #ff9100; }
 .card.win { border: 2px solid #00ffcc; box-shadow: 0 0 10px #00ffcc; }
 
 .status{font-size:14px;font-weight:bold;color:#ffd700;margin:4px 0}
 
 .bottom-panel{width:100%;max-width:400px;background:#0f111a;border-top:1px solid #2a2f45;padding:8px 12px;display:flex;flex-direction:column;align-items:center;}
 
-/* Thanh chọn mức cược cuộn ngang */
 .bet-container { width: 100%; margin-bottom: 6px; text-align: left; }
 .bet-label { font-size: 10px; color: #8a98c2; font-weight: bold; margin-bottom: 3px; display: block; }
 .bet-bar {
@@ -139,28 +141,17 @@ body{background:#090a10;color:#fff;font-family:Arial,sans-serif;text-align:cente
 
 <script>
 const BET_LEVELS = [0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500];
-let currentBet = 5; // Mức cược mặc định ban đầu
+let currentBet = 5;
 
-const ITEMS=[
-{rank:'A',suit:'♠',name:'ÁT BÍCH',color:'#000'},
-{rank:'A',suit:'♥',name:'ÁT CƠ',color:'#d32f2f'},
-{rank:'A',suit:'♦',name:'ÁT RÔ',color:'#d32f2f'},
-{rank:'A',suit:'♣',name:'ÁT NHÉP',color:'#000'},
-{rank:'K',suit:'♠',name:'GIÀ BÍCH',color:'#000'},
-{rank:'K',suit:'♥',name:'GIÀ CƠ',color:'#d32f2f'},
-{rank:'K',suit:'♦',name:'GIÀ RÔ',color:'#d32f2f'},
-{rank:'K',suit:'♣',name:'GIÀ NHÉP',color:'#000'},
-{rank:'Q',suit:'♠',name:'ĐẦM BÍCH',color:'#000'},
-{rank:'Q',suit:'♥',name:'ĐẦM CƠ',color:'#d32f2f'},
-{rank:'Q',suit:'♦',name:'ĐẦM RÔ',color:'#d32f2f'},
-{rank:'Q',suit:'♣',name:'ĐẦM NHÉP',color:'#000'},
-{rank:'J',suit:'♠',name:'BỒI BÍCH',color:'#000'},
-{rank:'J',suit:'♥',name:'BỒI CƠ',color:'#d32f2f'},
-{rank:'J',suit:'♦',name:'BỒI RÔ',color:'#d32f2f'},
-{rank:'J',suit:'♣',name:'BỒI NHÉP',color:'#000'},
-{rank:'10',suit:'♥',name:'10 CƠ',color:'#d32f2f'},
-{rank:'10',suit:'♦',name:'10 RÔ',color:'#d32f2f'},
-{rank:'🌟',suit:'',name:'WILD',color:'#ff9100',isWild:true}
+// Danh sách các hình ảnh lá bài (sử dụng các file ảnh bạn đã tải lên)
+const ITEMS = [
+    { name: 'Át Bích', img: '1639.jpg' },
+    { name: 'Át Cơ', img: '1638.jpg' },
+    { name: 'Già Rô', img: '1637.jpg' },
+    { name: 'Đầm Bích', img: '1636.jpg' },
+    { name: 'Bồi Nhép', img: '1635.jpg' },
+    { name: '10 Cơ', img: '1634.jpg' },
+    { name: 'Wild', img: '1633.jpg', isWild: true }
 ];
 
 let balance=10000,isSpinning=false,grid=document.getElementById('grid');
@@ -192,20 +183,7 @@ function createCard(item, index){
 let d=document.createElement('div');
 d.className='card' + (item.isWild ? ' wild' : '');
 d.style.animationDelay = (index * 0.02) + 's';
-
-if(item.isWild){
-d.innerHTML=`
-<div class="card-top" style="color:${item.color}">${item.rank}</div>
-<div class="card-center">${item.rank}</div>
-<div class="card-sub">${item.name}</div>
-`;
-} else {
-d.innerHTML=`
-<div class="card-top" style="color:${item.color}">${item.rank}<br>${item.suit}</div>
-<div class="card-center" style="color:${item.color}">${item.suit}</div>
-<div class="card-sub">${item.name}</div>
-`;
-}
+d.innerHTML = `<img src="${item.img}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/70x70?text=${item.name}'">`;
 return d;
 }
 
