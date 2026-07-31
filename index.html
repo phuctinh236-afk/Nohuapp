@@ -3,100 +3,363 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nổ Hũ Giải Trí</title>
+    <title>Super Ace - Nổ Hũ</title>
     <style>
-        body { background: #1a1a1a; color: #fff; text-align: center; font-family: Arial, sans-serif; padding-top: 40px; }
-        .slot-machine { font-size: 45px; background: #333; padding: 20px; border-radius: 10px; display: inline-block; margin: 20px; border: 2px solid #ffcc00; box-shadow: 0 0 15px rgba(255, 204, 0, 0.4); }
-        .slot { display: inline-block; width: 60px; transition: transform 0.1s; }
-        .spinning { transform: scale(1.15); filter: blur(1px); }
-        button { background: #ffcc00; border: none; padding: 15px 30px; font-size: 20px; font-weight: bold; border-radius: 5px; cursor: pointer; color: #000; }
-        button:disabled { background: #555; color: #aaa; cursor: not-allowed; }
-        button:active:not(:disabled) { background: #e6b800; }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        body {
+            background: #0d0d1a;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 10px;
+        }
+
+        .header {
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 5px;
+        }
+        .game-title {
+            font-size: 26px;
+            font-weight: 900;
+            background: linear-gradient(180deg, #ffe600, #ff8800);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(255, 200, 0, 0.5);
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .multiplier-bar {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid #444;
+            border-radius: 20px;
+            padding: 6px;
+            margin-bottom: 10px;
+        }
+        .mult-item {
+            font-weight: bold;
+            font-size: 16px;
+            color: #888;
+            padding: 4px 12px;
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+        .mult-item.active {
+            color: #000;
+            background: linear-gradient(180deg, #ffee55, #ffaa00);
+            box-shadow: 0 0 10px #ffaa00;
+            transform: scale(1.1);
+        }
+
+        .slot-container {
+            width: 100%;
+            max-width: 380px;
+            background: linear-gradient(180deg, #1f1c2c, #0a0a14);
+            border: 3px solid #ffd700;
+            border-radius: 15px;
+            padding: 10px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        .card-cell {
+            background: linear-gradient(145deg, #2a283d, #181726);
+            border: 1px solid #444;
+            border-radius: 8px;
+            height: 72px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 26px;
+            font-weight: bold;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+            transition: transform 0.1s, filter 0.1s;
+        }
+        .card-cell.spinning {
+            filter: blur(2px);
+            transform: scale(0.95);
+        }
+        .card-cell.win {
+            border-color: #00ffcc;
+            background: linear-gradient(145deg, #005544, #181726);
+            box-shadow: 0 0 15px #00ffcc;
+            animation: pulse 0.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+
+        .card-label {
+            font-size: 10px;
+            margin-top: 2px;
+            color: #aaa;
+        }
+
+        .status-msg {
+            height: 30px;
+            margin: 10px 0;
+            font-size: 16px;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+        }
+
+        .controls {
+            width: 100%;
+            max-width: 400px;
+            background: #151522;
+            border-top: 2px solid #333;
+            border-radius: 15px 15px 0 0;
+            padding: 15px;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .info-box {
+            background: #0a0a12;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 8px 12px;
+            width: 48%;
+            text-align: center;
+        }
+        .info-title { font-size: 11px; color: #888; margin-bottom: 2px; }
+        .info-value { font-size: 18px; font-weight: bold; color: #00ffcc; }
+
+        .spin-btn {
+            width: 100%;
+            padding: 16px;
+            font-size: 22px;
+            font-weight: 900;
+            color: #000;
+            background: linear-gradient(180deg, #ffe600, #ff8800);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #b36200, 0 10px 15px rgba(255, 136, 0, 0.4);
+            transition: all 0.1s;
+        }
+        .spin-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #b36200, 0 5px 10px rgba(255, 136, 0, 0.4);
+        }
+        .spin-btn:disabled {
+            background: #444;
+            color: #888;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
-    <h1>🎰 Nổ Hũ Giải Trí 🎰</h1>
-    <h2>Số dư: <span id="coins">1000</span> xu</h2>
-    
-    <div class="slot-machine">
-        <span id="slot1" class="slot">🍒</span> | 
-        <span id="slot2" class="slot">🍋</span> | 
-        <span id="slot3" class="slot">🔔</span>
-    </div>
-    
-    <br><br>
-    <button id="spinBtn" onclick="spin()">QUAY NGAY (-100 xu)</button>
-    <h3 id="result"></h3>
 
-    <script>
-        let coins = 1000;
-        const symbols = ["🍒", "🍋", "🔔", "⭐", "💎", "💰"];
+    <div class="header">
+        <div class="game-title">♠️ SUPER ACE ♠️</div>
+        <div class="multiplier-bar">
+            <div id="m1" class="mult-item active">x1</div>
+            <div id="m2" class="mult-item">x2</div>
+            <div id="m3" class="mult-item">x3</div>
+            <div id="m5" class="mult-item">x5</div>
+        </div>
+    </div>
+
+    <div class="slot-container">
+        <div class="grid" id="grid">
+            </div>
+    </div>
+
+    <div class="status-msg" id="statusMsg">Bấm QUAY để bắt đầu!</div>
+
+    <div class="controls">
+        <div class="info-row">
+            <div class="info-box">
+                <div class="info-title">SỐ DƯ XU</div>
+                <div class="info-value" id="balance">1,000</div>
+            </div>
+            <div class="info-box">
+                <div class="info-title">TIỀN THẮNG</div>
+                <div class="info-value" id="winAmount" style="color:#ffee55;">0</div>
+            </div>
+        </div>
+
+        <button class="spin-btn" id="spinBtn" onclick="spin()">QUAY (100 Xu)</button>
+    </div>
+        <script>
+        const SYMBOLS = [
+            { icon: '♠️', name: 'ACE', color: '#00e5ff', value: 50 },
+            { icon: '👑', name: 'KING', color: '#ffea00', value: 30 },
+            { icon: '👸', name: 'QUEEN', color: '#ff4081', value: 20 },
+            { icon: '🃏', name: 'JACK', color: '#b388ff', value: 10 },
+            { icon: '🌟', name: 'WILD', color: '#ff9100', value: 100 }
+        ];
+
+        let balance = 1000;
         let isSpinning = false;
+        const gridElement = document.getElementById('grid');
+        const balanceElement = document.getElementById('balance');
+        const winAmountElement = document.getElementById('winAmount');
+        const statusMsg = document.getElementById('statusMsg');
+        const spinBtn = document.getElementById('spinBtn');
+
+        let currentGrid = [];
+        initGrid();
+
+        function initGrid() {
+            gridElement.innerHTML = '';
+            currentGrid = [];
+            for (let i = 0; i < 16; i++) {
+                const sym = SYMBOLS[Math.floor(Math.random() * (SYMBOLS.length - 1))];
+                currentGrid.push(sym);
+                const cell = document.createElement('div');
+                cell.className = 'card-cell';
+                cell.id = `cell-${i}`;
+                cell.innerHTML = `<span style="color:${sym.color}">${sym.icon}</span><span class="card-label">${sym.name}</span>`;
+                gridElement.appendChild(cell);
+            }
+        }
+
+        function setMultiplier(level) {
+            document.querySelectorAll('.mult-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(`m${level}`).classList.add('active');
+        }
 
         function spin() {
             if (isSpinning) return;
-            
-            if (coins < 100) {
-                document.getElementById("result").innerText = "Hết xu rồi! Đợi hồi máu nhé!";
+            if (balance < 100) {
+                statusMsg.innerText = "❌ Hết xu rồi!";
                 return;
             }
 
-            coins -= 100;
-            document.getElementById("coins").innerText = coins;
-            document.getElementById("result").innerText = "🎰 Đang quay...";
+            balance -= 100;
+            balanceElement.innerText = balance.toLocaleString();
+            winAmountElement.innerText = '0';
+            setMultiplier(1);
+            statusMsg.innerText = "🎰 Đang quay Super Ace...";
             
             isSpinning = true;
-            const spinBtn = document.getElementById("spinBtn");
             spinBtn.disabled = true;
 
-            const slot1 = document.getElementById("slot1");
-            const slot2 = document.getElementById("slot2");
-            const slot3 = document.getElementById("slot3");
+            document.querySelectorAll('.card-cell').forEach(c => c.classList.remove('win'));
 
-            slot1.classList.add("spinning");
-            slot2.classList.add("spinning");
-            slot3.classList.add("spinning");
-
-            // Tạo hiệu ứng nhảy biểu tượng liên tục trong khi quay
+            let spinTicks = 0;
+            const maxTicks = 20;
             const interval = setInterval(() => {
-                slot1.innerText = symbols[Math.floor(Math.random() * symbols.length)];
-                slot2.innerText = symbols[Math.floor(Math.random() * symbols.length)];
-                slot3.innerText = symbols[Math.floor(Math.random() * symbols.length)];
-            }, 70);
-
-            // Dừng quay sau 1.5 giây và chốt kết quả
-            setTimeout(() => {
-                clearInterval(interval);
-                
-                slot1.classList.remove("spinning");
-                slot2.classList.remove("spinning");
-                slot3.classList.remove("spinning");
-
-                let s1 = symbols[Math.floor(Math.random() * symbols.length)];
-                let s2 = symbols[Math.floor(Math.random() * symbols.length)];
-                let s3 = symbols[Math.floor(Math.random() * symbols.length)];
-
-                slot1.innerText = s1;
-                slot2.innerText = s2;
-                slot3.innerText = s3;
-
-                if (s1 === s2 && s2 === s3) {
-                    if (s3 === "💰") {
-                        coins += 5000;
-                        document.getElementById("result").innerText = "🎉 NỔ HŨ LỚN! +5000 xu 🎉";
-                    } else {
-                        coins += 1000;
-                        document.getElementById("result").innerText = "✨ Trúng thưởng! +1000 xu ✨";
-                    }
-                } else {
-                    document.getElementById("result").innerText = "Chúc bạn may mắn lần sau!";
+                spinTicks++;
+                for (let i = 0; i < 16; i++) {
+                    const randomSym = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+                    const cell = document.getElementById(`cell-${i}`);
+                    cell.classList.add('spinning');
+                    cell.innerHTML = `<span style="color:${randomSym.color}">${randomSym.icon}</span><span class="card-label">${randomSym.name}</span>`;
                 }
-                
-                document.getElementById("coins").innerText = coins;
-                spinBtn.disabled = false;
-                isSpinning = false;
-            }, 1500);
+
+                if (spinTicks >= maxTicks) {
+                    clearInterval(interval);
+                    finalizeSpin();
+                }
+            }, 60);
+        }
+
+        function finalizeSpin() {
+            currentGrid = [];
+            for (let i = 0; i < 16; i++) {
+                const cell = document.getElementById(`cell-${i}`);
+                cell.classList.remove('spinning');
+                const finalSym = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+                currentGrid.push(finalSym);
+                cell.innerHTML = `<span style="color:${finalSym.color}">${finalSym.icon}</span><span class="card-label">${finalSym.name}</span>`;
+            }
+
+            calculateWin();
+            spinBtn.disabled = false;
+            isSpinning = false;
+        }
+
+        function calculateWin() {
+            let totalWin = 0;
+            let winningIndexes = new Set();
+
+            for (let row = 0; row < 4; row++) {
+                const rowStart = row * 4;
+                const sym0 = currentGrid[rowStart];
+                let count = 1;
+                let matchIndexes = [rowStart];
+
+                for (let col = 1; col < 4; col++) {
+                    const currentSym = currentGrid[rowStart + col];
+                    if (currentSym.name === sym0.name || currentSym.name === 'WILD' || sym0.name === 'WILD') {
+                        count++;
+                        matchIndexes.push(rowStart + col);
+                    } else {
+                        break;
+                    }
+                }
+
+                if (count >= 3) {
+                    let winValue = sym0.value * count * 10;
+                    totalWin += winValue;
+                    matchIndexes.forEach(idx => winningIndexes.add(idx));
+                }
+            }
+
+            if (totalWin > 0) {
+                let mult = 1;
+                if (totalWin >= 500) mult = 5;
+                else if (totalWin >= 300) mult = 3;
+                else if (totalWin >= 150) mult = 2;
+
+                setMultiplier(mult);
+                let finalPayout = totalWin * mult;
+
+                winningIndexes.forEach(idx => {
+                    document.getElementById(`cell-${idx}`).classList.add('win');
+                });
+
+                balance += finalPayout;
+                balanceElement.innerText = balance.toLocaleString();
+                winAmountElement.innerText = finalPayout.toLocaleString();
+
+                if (mult === 5) {
+                    statusMsg.innerText = `🎉 NỔ HŨ LỚN! THẮNG +${finalPayout.toLocaleString()} XU! 🎉`;
+                } else {
+                    statusMsg.innerText = `✨ TRÚNG BÀI! +${finalPayout.toLocaleString()} XU (x${mult})`;
+                }
+            } else {
+                setMultiplier(1);
+                statusMsg.innerText = "Chúc bạn may mắn lần sau!";
+            }
         }
     </script>
 </body>
 </html>
+cell.innerHTML = `<span style="color:${finalSym.color}">${finalSym.icon}</span><span class="card-label">${finalSym.name}</span>`;
+            }
+
+            // Check wins
+            calculateWin();
+            spinBtn.disabled = false;
+            isSpinning = false;
+        }
+
+        function calculateWin() {
+            let totalWin = 0;
+            let winningIndexes = new Set();
+
+            // Check rows (4 rows of 4)
+            for (let row = 0; row < 4; row++) {
+        
