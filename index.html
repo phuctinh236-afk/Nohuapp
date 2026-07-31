@@ -7,8 +7,11 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;user-select:none}
 body{background:#090a10;color:#fff;font-family:Arial,sans-serif;text-align:center;min-height:100vh;display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding-bottom:10px}
-.top-banner{width:100%;background:linear-gradient(180deg,#1e092b,#090a10);padding:10px 0;border-bottom:2px solid #e2b34a}
+.top-banner{width:100%;background:linear-gradient(180deg,#1e092b,#090a10);padding:10px 0;border-bottom:2px solid #e2b34a;position:relative}
 .logo{font-size:26px;font-weight:900;font-style:italic;background:linear-gradient(180deg,#fff7a1,#f5af19,#e17000);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+.menu-icon{position:absolute;right:15px;top:12px;font-size:20px;cursor:pointer;color:#ffd700;background:#191c2b;border:1px solid #3c4363;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:8px;}
+
 .mult-bar{display:flex;justify-content:center;gap:8px;margin:8px 0}
 .mult-btn{background:#191c2b;border:1px solid #3c4363;color:#7b88b3;padding:4px 12px;border-radius:12px;font-weight:bold;font-size:13px}
 .mult-btn.active{background:linear-gradient(180deg,#ffe066,#f5af19);color:#000;border-color:#fff;box-shadow:0 0 8px #f5af19}
@@ -17,7 +20,7 @@ body{background:#090a10;color:#fff;font-family:Arial,sans-serif;text-align:cente
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 
 @keyframes slideDown {
-    0% { transform: translateY(-60px); opacity: 0; }
+    0% { transform: translateY(-40px); opacity: 0; }
     100% { transform: translateY(0); opacity: 1; }
 }
 
@@ -32,7 +35,7 @@ body{background:#090a10;color:#fff;font-family:Arial,sans-serif;text-align:cente
     align-items: flex-start;
     padding: 4px 6px;
     position: relative;
-    animation: slideDown 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    animation: slideDown 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 .card-top { font-size: 11px; font-weight: bold; line-height: 1; text-align: left; }
@@ -105,35 +108,85 @@ body{background:#090a10;color:#fff;font-family:Arial,sans-serif;text-align:cente
     100% { transform: rotate(360deg); }
 }
 .spin-btn.spinning {
-    animation: rotateBtn 0.6s linear infinite;
+    animation: rotateBtn 0.75s linear infinite;
 }
+
+/* Modal Menu Nạp / Rút */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.75);
+    z-index: 999;
+    justify-content: center;
+    align-items: center;
+}
+.modal-box {
+    background: #121420;
+    border: 2px solid #d4a338;
+    border-radius: 12px;
+    padding: 20px;
+    width: 85%;
+    max-width: 320px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(212,163,56,0.3);
+}
+.modal-title { font-size: 16px; font-weight: bold; color: #ffd700; margin-bottom: 15px; }
+.action-btn {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    margin-bottom: 10px;
+}
+.btn-deposit { background: linear-gradient(135deg, #ffdf40, #f5af19); color: #000; }
+.btn-withdraw { background: linear-gradient(135deg, #ff5252, #c62828); color: #fff; }
+.btn-close { background: #2a2f45; color: #fff; padding: 6px 15px; font-size: 12px; margin-top: 5px; }
 </style>
 </head>
 <body>
+
 <div class="top-banner">
-<div class="logo">SUPER ACE</div>
-<div class="mult-bar">
-<div id="m1" class="mult-btn active">x1</div>
-<div id="m2" class="mult-btn">x2</div>
-<div id="m3" class="mult-btn">x3</div>
-<div id="m5" class="mult-btn">x5</div>
+    <div class="logo">SUPER ACE</div>
+    <div class="menu-icon" onclick="toggleMenu()">☰</div>
+    <div class="mult-bar">
+        <div id="m1" class="mult-btn active">x1</div>
+        <div id="m2" class="mult-btn">x2</div>
+        <div id="m3" class="mult-btn">x3</div>
+        <div id="m5" class="mult-btn">x5</div>
+    </div>
 </div>
-</div>
+
 <div class="game-frame">
-<div class="grid" id="grid"></div>
+    <div class="grid" id="grid"></div>
 </div>
+
 <div class="status" id="status">CHỌN MỨC CƯỢC VÀ QUAY</div>
+
 <div class="bottom-panel">
     <div class="bet-container">
         <span class="bet-label">CHỌN MỨC CƯỢC:</span>
         <div class="bet-bar" id="betBar"></div>
     </div>
 
-<div class="data-row">
-<div class="data-card"><div class="title">SỐ DƯ</div><div class="val" id="balance">100</div></div>
-<div class="data-card"><div class="title">THẮNG</div><div class="val" id="win" style="color:#ffe066">0</div></div>
+    <div class="data-row">
+        <div class="data-card"><div class="title">SỐ DƯ</div><div class="val" id="balance">100</div></div>
+        <div class="data-card"><div class="title">THẮNG</div><div class="val" id="win" style="color:#ffe066">0</div></div>
+    </div>
+    <button class="spin-btn" id="spinBtn" onclick="spin()">QUAY</button>
 </div>
-<button class="spin-btn" id="spinBtn" onclick="spin()">QUAY</button>
+
+<!-- Modal Nạp/Rút -->
+<div class="modal-overlay" id="menuModal">
+    <div class="modal-box">
+        <div class="modal-title">QUẢN LÝ TÀI KHOẢN</div>
+        <button class="action-btn btn-deposit" onclick="openDeposit()">NẠP TIỀN</button>
+        <button class="action-btn btn-withdraw" onclick="openWithdraw()">RÚT TIỀN</button>
+        <button class="action-btn btn-close" onclick="toggleMenu()">ĐÓNG</button>
+    </div>
 </div>
 
 <script>
@@ -163,6 +216,21 @@ const ITEMS=[
 ];
 
 let balance=100,isSpinning=false,grid=document.getElementById('grid');
+
+function toggleMenu() {
+    let modal = document.getElementById('menuModal');
+    modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+}
+
+function openDeposit() {
+    alert("Vui lòng liên hệ CSKH để thực hiện nạp tiền!");
+    toggleMenu();
+}
+
+function openWithdraw() {
+    alert("Số dư hoặc điều kiện chưa đủ để rút tiền!");
+    toggleMenu();
+}
 
 function initBets(){
     let bar = document.getElementById('betBar');
@@ -217,48 +285,49 @@ function createCard(item, index){
 }
 
 function spin(){
-if(isSpinning||balance < currentBet) {
-    if(balance < currentBet) alert("Số dư không đủ để đặt cược mức này!");
-    return;
-}
+    if(isSpinning||balance < currentBet) {
+        if(balance < currentBet) alert("Số dư không đủ để đặt cược mức này!");
+        return;
+    }
 
-balance -= currentBet;
-document.getElementById('balance').innerText = balance.toLocaleString(undefined, {maximumFractionDigits: 1});
-document.getElementById('win').innerText='0';
-document.getElementById('status').innerText='ĐANG QUAY...';
-let btn = document.getElementById('spinBtn');
-btn.disabled=true;
-btn.classList.add('spinning');
-isSpinning=true;
+    balance -= currentBet;
+    document.getElementById('balance').innerText = balance.toLocaleString(undefined, {maximumFractionDigits: 1});
+    document.getElementById('win').innerText='0';
+    document.getElementById('status').innerText='ĐANG QUAY...';
+    let btn = document.getElementById('spinBtn');
+    btn.disabled=true;
+    btn.classList.add('spinning');
+    isSpinning=true;
 
-let c=0,t=setInterval(()=>{
-grid.innerHTML='';
-for(let i=0;i<16;i++)grid.appendChild(createCard(ITEMS[Math.floor(Math.random()*ITEMS.length)], i));
-c++;
-if(c>15){clearInterval(t);finish();}
-},60);
+    // Tổng thời gian quay chuẩn ~0.75s (15 bước x 50ms = 750ms)
+    let c=0, t=setInterval(()=>{
+        grid.innerHTML='';
+        for(let i=0;i<16;i++)grid.appendChild(createCard(ITEMS[Math.floor(Math.random()*ITEMS.length)], i));
+        c++;
+        if(c>15){clearInterval(t);finish();}
+    }, 50);
 }
 
 function finish(){
-isSpinning=false;
-let btn = document.getElementById('spinBtn');
-btn.disabled=false;
-btn.classList.remove('spinning');
+    isSpinning=false;
+    let btn = document.getElementById('spinBtn');
+    btn.disabled=false;
+    btn.classList.remove('spinning');
 
-if(Math.random()>0.5){
-let multFactor = Math.floor(Math.random() * 5 + 1) * 20;
-let w = currentBet * multFactor;
-balance += w;
-document.getElementById('balance').innerText = balance.toLocaleString(undefined, {maximumFractionDigits: 1});
-document.getElementById('win').innerText = w.toLocaleString(undefined, {maximumFractionDigits: 1});
-document.getElementById('status').innerText = `🎉 BIG WIN +${w.toLocaleString()}!`;
-document.querySelectorAll('.mult-btn').forEach(b=>b.classList.remove('active'));
-document.getElementById('m3').classList.add('active');
-}else{
-document.getElementById('status').innerText='CHÚC MAY MẮN LẦN SAU!';
-document.querySelectorAll('.mult-btn').forEach(b=>b.classList.remove('active'));
-document.getElementById('m1').classList.add('active');
-}
+    if(Math.random()>0.5){
+        let multFactor = Math.floor(Math.random() * 5 + 1) * 20;
+        let w = currentBet * multFactor;
+        balance += w;
+        document.getElementById('balance').innerText = balance.toLocaleString(undefined, {maximumFractionDigits: 1});
+        document.getElementById('win').innerText = w.toLocaleString(undefined, {maximumFractionDigits: 1});
+        document.getElementById('status').innerText = `🎉 BIG WIN +${w.toLocaleString()}!`;
+        document.querySelectorAll('.mult-btn').forEach(b=>b.classList.remove('active'));
+        document.getElementById('m3').classList.add('active');
+    }else{
+        document.getElementById('status').innerText='CHÚC MAY MẮN LẦN SAU!';
+        document.querySelectorAll('.mult-btn').forEach(b=>b.classList.remove('active'));
+        document.getElementById('m1').classList.add('active');
+    }
 }
 
 init();
