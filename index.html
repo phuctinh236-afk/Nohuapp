@@ -6,9 +6,12 @@
     <title>Nổ Hũ Giải Trí</title>
     <style>
         body { background: #1a1a1a; color: #fff; text-align: center; font-family: Arial, sans-serif; padding-top: 40px; }
-        .slot-machine { font-size: 45px; background: #333; padding: 20px; border-radius: 10px; display: inline-block; margin: 20px; border: 2px solid #ffcc00; }
+        .slot-machine { font-size: 45px; background: #333; padding: 20px; border-radius: 10px; display: inline-block; margin: 20px; border: 2px solid #ffcc00; box-shadow: 0 0 15px rgba(255, 204, 0, 0.4); }
+        .slot { display: inline-block; width: 60px; transition: transform 0.1s; }
+        .spinning { transform: scale(1.15); filter: blur(1px); }
         button { background: #ffcc00; border: none; padding: 15px 30px; font-size: 20px; font-weight: bold; border-radius: 5px; cursor: pointer; color: #000; }
-        button:active { background: #e6b800; }
+        button:disabled { background: #555; color: #aaa; cursor: not-allowed; }
+        button:active:not(:disabled) { background: #e6b800; }
     </style>
 </head>
 <body>
@@ -16,44 +19,83 @@
     <h2>Số dư: <span id="coins">1000</span> xu</h2>
     
     <div class="slot-machine">
-        <span id="slot1">🍒</span> | <span id="slot2">🍋</span> | <span id="slot3">🔔</span>
+        <span id="slot1" class="slot">🍒</span> | 
+        <span id="slot2" class="slot">🍋</span> | 
+        <span id="slot3" class="slot">🔔</span>
     </div>
     
-    <br>
-    <button onclick="spin()">QUAY NGAY (-100 xu)</button>
+    <br><br>
+    <button id="spinBtn" onclick="spin()">QUAY NGAY (-100 xu)</button>
     <h3 id="result"></h3>
 
     <script>
         let coins = 1000;
         const symbols = ["🍒", "🍋", "🔔", "⭐", "💎", "💰"];
+        let isSpinning = false;
 
         function spin() {
+            if (isSpinning) return;
+            
             if (coins < 100) {
                 document.getElementById("result").innerText = "Hết xu rồi! Đợi hồi máu nhé!";
                 return;
             }
+
             coins -= 100;
-            
-            let s1 = symbols[Math.floor(Math.random() * symbols.length)];
-            let s2 = symbols[Math.floor(Math.random() * symbols.length)];
-            let s3 = symbols[Math.floor(Math.random() * symbols.length)];
-
-            document.getElementById("slot1").innerText = s1;
-            document.getElementById("slot2").innerText = s2;
-            document.getElementById("slot3").innerText = s3;
-
-            if (s1 === s2 && s2 === s3) {
-                if (s3 === "💰") {
-                    coins += 5000;
-                    document.getElementById("result").innerText = "🎉 NỔ HŨ LỚN! +5000 xu 🎉";
-                } else {
-                    coins += 1000;
-                    document.getElementById("result").innerText = "✨ Trúng thưởng! +1000 xu ✨";
-                }
-            } else {
-                document.getElementById("result").innerText = "Chúc bạn may mắn lần sau!";
-            }
             document.getElementById("coins").innerText = coins;
+            document.getElementById("result").innerText = "🎰 Đang quay...";
+            
+            isSpinning = true;
+            const spinBtn = document.getElementById("spinBtn");
+            spinBtn.disabled = true;
+
+            const slot1 = document.getElementById("slot1");
+            const slot2 = document.getElementById("slot2");
+            const slot3 = document.getElementById("slot3");
+
+            slot1.classList.add("spinning");
+            slot2.classList.add("spinning");
+            slot3.classList.add("spinning");
+
+            // Tạo hiệu ứng nhảy biểu tượng liên tục trong khi quay
+            const interval = setInterval(() => {
+                slot1.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+                slot2.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+                slot3.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+            }, 70);
+
+            // Dừng quay sau 1.5 giây và chốt kết quả
+            setTimeout(() => {
+                clearInterval(interval);
+                
+                slot1.classList.remove("spinning");
+                slot2.classList.remove("spinning");
+                slot3.classList.remove("spinning");
+
+                let s1 = symbols[Math.floor(Math.random() * symbols.length)];
+                let s2 = symbols[Math.floor(Math.random() * symbols.length)];
+                let s3 = symbols[Math.floor(Math.random() * symbols.length)];
+
+                slot1.innerText = s1;
+                slot2.innerText = s2;
+                slot3.innerText = s3;
+
+                if (s1 === s2 && s2 === s3) {
+                    if (s3 === "💰") {
+                        coins += 5000;
+                        document.getElementById("result").innerText = "🎉 NỔ HŨ LỚN! +5000 xu 🎉";
+                    } else {
+                        coins += 1000;
+                        document.getElementById("result").innerText = "✨ Trúng thưởng! +1000 xu ✨";
+                    }
+                } else {
+                    document.getElementById("result").innerText = "Chúc bạn may mắn lần sau!";
+                }
+                
+                document.getElementById("coins").innerText = coins;
+                spinBtn.disabled = false;
+                isSpinning = false;
+            }, 1500);
         }
     </script>
 </body>
